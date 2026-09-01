@@ -4,9 +4,9 @@ import datetime as d
 import mysql.connector
 
 conexao = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
+    host="10.18.32.218",
+    user="adm_monfire",
+    password="Monfire@2026",
     database="monitoramento24h"
 )
 
