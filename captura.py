@@ -1,31 +1,129 @@
-import psutil as p
+import psutil as psiu
 import time as t
-import datetime as d
+from datetime import datetime
 import mysql.connector
 
-conexao = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="monitoramento24h"
-)
+def banco(N1, N2, N3):
+
+    cnx = mysql.connector.connect(user = "adm_monfire",
+                                  password = "Monfire@2026",
+                                  host = "10.18.33.86",
+                                  database = "monfire"
+                                  )
+
+    cursor = cnx.cursor()
+
+    add_value = ("INSERT INTO captura (valor, fk_componente, uni_medida, fk_maquina) VALUES (%s, %s, %s, 1)")
+
+    data_value = (N1, N2, N3)
+
+    cursor.execute(add_value, data_value)
+
+    cnx.commit()
+
+    cursor.execute( "SELECT * FROM captura")
+
+    for db in cursor:
+        print(db)
+ 
+    cursor.close()
+
+# variaveis CPU
+porcentagem_de_uso_cpu = 0
+frequencia = 0
+
+# variaveis memoria
+porcentagem_de_uso_ram = 0
+memoria_total = 0
+memoria_disponivel = 0
+memoria_utilizada = 0
+
+# variaveis disco
+porcentagem_de_disco = 0
+espaco_total = 0
+espaco_livre = 0
+espaco_utilizado = 0 
 
 
-def captura():
-    print("\n-----MONITORAMENTO-----")
-    print("Uso da CPU:",p.cpu_percent(interval=1),"%")
-    print("Uso da Memória RAM:",p.virtual_memory().percent, "%")
-    print("Uso do Disco:",p.disk_usage('C:\\').used, "Bytes")
-    print("Horário da captura:",d.datetime.now())
-    sql = "INSERT INTO captura (porcentagem_de_uso_cpu, porcentagem_de_uso_ram, espaco_utilizado, dtHr) VALUES (%s, %s, %s, %s)"
-    valores = (p.cpu_percent(interval=1), p.virtual_memory().percent, p.disk_usage('C:\\').used, d.datetime.now())
-    cursor.execute(sql, valores)
-    conexao.commit()
+def CPU():
+
+    # Análise CPU
+    print('\n')
+
+    print("Porcentagem de CPU usada:")
+    porcentagem_de_uso_cpu = psiu.cpu_percent(interval=0.1)
+    print(porcentagem_de_uso_cpu)
+
+    print("Frequência da CPU")
+    frequencia = psiu.cpu_freq().current
+    print(frequencia)
+
+    print('\n')
+
+    banco(porcentagem_de_uso_cpu, 1, '%' )
+    banco(frequencia, 1,'Hz')
+
+def RAM() :
+    # Análise memória RAM
+        
+    print("Memória RAM utilizada:") 
+    porcentagem_de_uso_ram = psiu.virtual_memory().percent
+    print(porcentagem_de_uso_ram)
     
+    print("Memória RAM total:") 
+    memoria_total = round(psiu.virtual_memory().total / (1024**3))
+    print(memoria_total)
+    
+    print("Memória RAM disponível:")
+    memoria_disponivel = round(psiu.virtual_memory().available / (1024**3))
+    print(memoria_disponivel)
+    
+    print("Memória RAM usada:")
+    memoria_utilizada = round(psiu.virtual_memory().used / (1024**3))
+    print(memoria_utilizada)
+    
+    print('\n')
 
-cursor = conexao.cursor()
+    banco(porcentagem_de_uso_ram, 7, '%')
+    banco(memoria_total, 7, 'Gb')
+    banco(memoria_disponivel, 7, 'Gb')
+    banco(memoria_utilizada, 7, 'Gb')
+
+def Disco() :
+     # Análise Disco
+                         
+    print("Porcentagem do Disco usada:")
+    porcentagem_de_disco = psiu.disk_usage('C:\\').percent
+    print(porcentagem_de_disco)
+     
+    print("Disco total usado:")
+    espaco_total = round(psiu.disk_usage('C:\\').total / (1024 ** 3))
+    print(espaco_total)
+         
+    print("Parte livre do disco:")
+    espaco_livre = round(psiu.disk_usage('C:\\').free / (1024 ** 3))
+    print(espaco_livre)
+         
+    print("Parte usada do disco:") 
+    espaco_utilizado = round(psiu.disk_usage('C:\\').used / (1024 ** 3))
+    print(espaco_utilizado)
+
+    banco(porcentagem_de_disco, 13, '%')
+    banco(espaco_total, 13, 'Gb')
+    banco(espaco_livre, 13, 'Gb')
+    banco(espaco_utilizado, 13, 'Gb')
+                 
+    print('\n')
+                   
+    print("Hora da captura:")
+    print(datetime.now().strftime("%H:%M:%S"))
+                 
+    print('\n')     
+
+
+
 while True:
-    captura()
-    t.sleep(10)
-    
-    
+    CPU()
+    RAM()
+    Disco()
+    t.sleep(5)
