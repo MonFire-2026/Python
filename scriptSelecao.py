@@ -60,8 +60,24 @@ def capturaDados():
     for x in myresult:
       print(x)
 
-capturaDados()
+    repetir()
     
+def repetir():
+
+    
+
+    pergunta_repetir = input("Deseja realizar uma nova consulta? (s/n)") 
+
+    if pergunta_repetir == "n":
+        print("\nAgradecemos a preferência")
+        print("\nEncerrando o programa...")
+    
+    elif pergunta_repetir == "s":
+        capturaDados()
+    else:
+            print("\nEncerrando o programa...")
+    
+capturaDados()
 
 
 
