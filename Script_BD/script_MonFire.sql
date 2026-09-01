@@ -94,3 +94,9 @@ SELECT c.id AS 'Número De Captura',
 FROM captura as c JOIN maquina as m on fk_maquina = m.id JOIN componente AS comp ON comp.id = fk_componente;
 
 select * from componente as c JOIN maquina AS m on c.fk_maquina = m.id;
+
+
+create view ViewDisco as select nome, tipo, concat(valor, " " ,uni_medida) as valor, captura.dtHr from captura join componente on fk_componente = componente.id where nome ='DISCO' and tipo = 'Uso';
+create view ViewCPU as select nome, tipo, concat(valor, " " ,uni_medida) as valor, captura.dtHr from captura join componente on fk_componente = componente.id where nome ='CPU' and tipo = 'Uso';
+create view ViewRAM as select nome, tipo, concat(valor, " " ,uni_medida) as valor, captura.dtHr from captura join componente on fk_componente = componente.id where nome ='RAM' and tipo = 'Uso';
+

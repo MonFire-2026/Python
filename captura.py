@@ -5,10 +5,10 @@ import mysql.connector
 
 def banco(N1, N2, N3, N4):
 
-    cnx = mysql.connector.connect(user = "adm_monfire",
-                                  password = "Monfire@2026",
-                                  host = "10.18.33.86",
-                                  database = "monfire"
+    cnx = mysql.connector.connect(user = "mickaela",
+                                  password = "0308",
+                                  host = "localhost",
+                                  database = "MonFire"
                                   )
 
     cursor = cnx.cursor()
