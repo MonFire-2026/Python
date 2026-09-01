@@ -3,7 +3,7 @@ import time as t
 from datetime import datetime
 import mysql.connector
 
-def banco(N1, N2, N3):
+def banco(N1, N2, N3, N4):
 
     cnx = mysql.connector.connect(user = "adm_monfire",
                                   password = "Monfire@2026",
@@ -13,15 +13,15 @@ def banco(N1, N2, N3):
 
     cursor = cnx.cursor()
 
-    add_value = ("INSERT INTO captura (valor, fk_componente, uni_medida, fk_maquina) VALUES (%s, %s, %s, 1)")
+    add_value = ("INSERT INTO captura (valor, tipo, fk_componente, uni_medida, fk_maquina) VALUES (%s, %s, %s,%s, 1)")
 
-    data_value = (N1, N2, N3)
+    data_value = (N1, N2, N3, N4)
 
     cursor.execute(add_value, data_value)
 
     cnx.commit()
 
-    cursor.execute( "SELECT * FROM captura")
+    # cursor.execute( "SELECT * FROM captura")
 
     for db in cursor:
         print(db)
@@ -60,8 +60,8 @@ def CPU():
 
     print('\n')
 
-    banco(porcentagem_de_uso_cpu, 1, '%' )
-    banco(frequencia, 1,'Hz')
+    banco(porcentagem_de_uso_cpu, 'Uso',1, '%' )
+    banco(frequencia, 'Frequência', 1,'Hz')
 
 def RAM() :
     # Análise memória RAM
@@ -84,10 +84,10 @@ def RAM() :
     
     print('\n')
 
-    banco(porcentagem_de_uso_ram, 7, '%')
-    banco(memoria_total, 7, 'Gb')
-    banco(memoria_disponivel, 7, 'Gb')
-    banco(memoria_utilizada, 7, 'Gb')
+    banco(porcentagem_de_uso_ram, 'Uso',7, '%')
+    banco(memoria_total, 'Total', 7, 'Gb')
+    banco(memoria_disponivel, 'Disponível', 7, 'Gb')
+    banco(memoria_utilizada, 'Em uso', 7, 'Gb')
 
 def Disco() :
      # Análise Disco
@@ -108,10 +108,10 @@ def Disco() :
     espaco_utilizado = round(psiu.disk_usage('C:\\').used / (1024 ** 3))
     print(espaco_utilizado)
 
-    banco(porcentagem_de_disco, 13, '%')
-    banco(espaco_total, 13, 'Gb')
-    banco(espaco_livre, 13, 'Gb')
-    banco(espaco_utilizado, 13, 'Gb')
+    banco(porcentagem_de_disco, 'Uso', 13, '%')
+    banco(espaco_total, 'Total', 13, 'Gb')
+    banco(espaco_livre, 'Disponível', 13, 'Gb')
+    banco(espaco_utilizado, 'Em uso', 13, 'Gb')
                  
     print('\n')
                    
