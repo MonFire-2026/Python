@@ -1,4 +1,4 @@
-import psutil as psiu
+import psutil as p
 import time as t
 from datetime import datetime
 import mysql.connector
@@ -13,7 +13,7 @@ def banco(N1, N2, N3, N4):
 
     cursor = cnx.cursor()
 
-    add_value = ("INSERT INTO captura (valor, tipo, fk_componente, uni_medida, fk_maquina) VALUES (%s, %s, %s,%s, 1)")
+    add_value = ("INSERT INTO captura (valor, tipo, fk_componente, uni_medida, fk_maquina) VALUES (%s, %s, %s, %s, 1)")
 
     data_value = (N1, N2, N3, N4)
 
@@ -51,11 +51,11 @@ def CPU():
     print('\n')
 
     print("Porcentagem de CPU usada:")
-    porcentagem_de_uso_cpu = psiu.cpu_percent(interval=0.1)
+    porcentagem_de_uso_cpu = p.cpu_percent(interval=0.1)
     print(porcentagem_de_uso_cpu)
 
     print("Frequência da CPU")
-    frequencia = psiu.cpu_freq().current
+    frequencia = p.cpu_freq().current
     print(frequencia)
 
     print('\n')
@@ -63,23 +63,24 @@ def CPU():
     banco(porcentagem_de_uso_cpu, 'Uso',1, '%' )
     banco(frequencia, 'Frequência', 1,'Hz')
 
+
 def RAM() :
     # Análise memória RAM
         
     print("Memória RAM utilizada:") 
-    porcentagem_de_uso_ram = psiu.virtual_memory().percent
+    porcentagem_de_uso_ram = p.virtual_memory().percent
     print(porcentagem_de_uso_ram)
     
     print("Memória RAM total:") 
-    memoria_total = round(psiu.virtual_memory().total / (1024**3))
+    memoria_total = round(p.virtual_memory().total / (1024**3))
     print(memoria_total)
     
     print("Memória RAM disponível:")
-    memoria_disponivel = round(psiu.virtual_memory().available / (1024**3))
+    memoria_disponivel = round(p.virtual_memory().available / (1024**3))
     print(memoria_disponivel)
     
     print("Memória RAM usada:")
-    memoria_utilizada = round(psiu.virtual_memory().used / (1024**3))
+    memoria_utilizada = round(p.virtual_memory().used / (1024**3))
     print(memoria_utilizada)
     
     print('\n')
@@ -89,23 +90,24 @@ def RAM() :
     banco(memoria_disponivel, 'Disponível', 7, 'Gb')
     banco(memoria_utilizada, 'Em uso', 7, 'Gb')
 
+
 def Disco() :
      # Análise Disco
                          
     print("Porcentagem do Disco usada:")
-    porcentagem_de_disco = psiu.disk_usage('C:\\').percent
+    porcentagem_de_disco = p.disk_usage('C:\\').percent
     print(porcentagem_de_disco)
      
     print("Disco total usado:")
-    espaco_total = round(psiu.disk_usage('C:\\').total / (1024 ** 3))
+    espaco_total = round(p.disk_usage('C:\\').total / (1024 ** 3))
     print(espaco_total)
          
     print("Parte livre do disco:")
-    espaco_livre = round(psiu.disk_usage('C:\\').free / (1024 ** 3))
+    espaco_livre = round(p.disk_usage('C:\\').free / (1024 ** 3))
     print(espaco_livre)
          
     print("Parte usada do disco:") 
-    espaco_utilizado = round(psiu.disk_usage('C:\\').used / (1024 ** 3))
+    espaco_utilizado = round(p.disk_usage('C:\\').used / (1024 ** 3))
     print(espaco_utilizado)
 
     banco(porcentagem_de_disco, 'Uso', 13, '%')
@@ -121,9 +123,9 @@ def Disco() :
     print('\n')     
 
 
-
 while True:
     CPU()
     RAM()
     Disco()
     t.sleep(5)
+    
