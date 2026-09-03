@@ -94,7 +94,7 @@ def RAM() :
         print(f"Porcentagem de uso da RAM: [blue]{porcentagem_de_uso_ram}%[/blue]")
 
     
-    print(f"[blue]{memoria_total}Gb[/blue]")
+    print(f"Memória RAM total: [blue]{memoria_total}Gb[/blue]")
 
 
     if memoria_disponivel < 7 :
