@@ -6,11 +6,13 @@ from rich import print
 
 
 def banco(N1, N2, N3, N4):
-
+    
     cnx = mysql.connector.connect(user = "adm_monfire",
                                   password = "Monfire@2026",
-                                  host = "10.18.33.86",
-                                  database = "monfire"
+                                  host = "127.0.0.1",
+                                  port = 3306,
+                                  database = "monfire",
+                                  use_pure = True
                                   )
 
     cursor = cnx.cursor()
@@ -25,8 +27,8 @@ def banco(N1, N2, N3, N4):
 
     # cursor.execute( "SELECT * FROM captura")
 
-    for db in cursor:
-        print(db)
+    # for db in cursor:
+    #     print(db)
  
     cursor.close()
 
