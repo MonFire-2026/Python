@@ -58,7 +58,7 @@ def CPU():
     if porcentagem_de_uso_cpu >= 80 :
         print(f"Alerta o uso da sua CPU está em: [bold red]{porcentagem_de_uso_cpu}% [/bold red]")   
 
-    elif porcentagem_de_uso_cpu >= 2 :
+    elif porcentagem_de_uso_cpu >= 50 :
         print(f"Alerta o uso da sua CPU está em: [bold yellow]{porcentagem_de_uso_cpu}% [/bold yellow]")  
 
     else : 
@@ -75,8 +75,8 @@ def CPU():
 
     print('\n')
 
-    # banco(porcentagem_de_uso_cpu, 'Uso',1, '%' )
-    # banco(frequencia, 'Frequência', 1,'Hz')
+    banco(porcentagem_de_uso_cpu, 'Uso',1, '%' )
+    banco(frequencia, 'Frequência', 1,'Hz')
 
 
 def RAM() :
@@ -121,10 +121,10 @@ def RAM() :
     print('\n')
 
 
-    # banco(porcentagem_de_uso_ram, 'Uso',7, '%')
-    # banco(memoria_total, 'Total', 7, 'Gb')
-    # banco(memoria_disponivel, 'Disponível', 7, 'Gb')
-    # banco(memoria_utilizada, 'Em uso', 7, 'Gb')
+    banco(porcentagem_de_uso_ram, 'Uso',7, '%')
+    banco(memoria_total, 'Total', 7, 'Gb')
+    banco(memoria_disponivel, 'Disponível', 7, 'Gb')
+    banco(memoria_utilizada, 'Em uso', 7, 'Gb')
 
 
 def Disco() :
@@ -166,10 +166,10 @@ def Disco() :
         print(f"Espaço do Disco que está sendo utilizado: [blue]{espaco_utilizado}Gb[/blue]")
 
     
-    # banco(porcentagem_de_disco, 'Uso', 13, '%')
-    # banco(espaco_total, 'Total', 13, 'Gb')
-    # banco(espaco_livre, 'Disponível', 13, 'Gb')
-    # banco(espaco_utilizado, 'Em uso', 13, 'Gb')
+    banco(porcentagem_de_disco, 'Uso', 13, '%')
+    banco(espaco_total, 'Total', 13, 'Gb')
+    banco(espaco_livre, 'Disponível', 13, 'Gb')
+    banco(espaco_utilizado, 'Em uso', 13, 'Gb')
                  
     print('\n')
                    
