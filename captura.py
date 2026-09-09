@@ -62,7 +62,7 @@ def CPU():
         print(f"Alerta o uso da sua CPU está em: [bold yellow]{porcentagem_de_uso_cpu}% [/bold yellow]")  
 
     else : 
-        print(f"Porcentagem de uso da CPU: [blue]{porcentagem_de_uso_cpu}%[/blue]")
+        print(f"Porcentagem de uso da CPU: [bold green] {porcentagem_de_uso_cpu}% [/bold green]")
 
     if frequencia >= 1700 :
         print(f"Alerta a frequência da sua CPU está em: [bold red]{frequencia}Hz [/bold red]")   
@@ -71,7 +71,7 @@ def CPU():
         print(f"Alerta a frequência da sua CPU está em: [bold yellow]{porcentagem_de_uso_cpu}Hz [/bold yellow]")  
 
     else :
-        print(f"A frequência da sua CPU está em: [blue]{frequencia}Hz[/blue]")
+        print(f"A frequência da sua CPU está em: [bold green] {frequencia}Hz [/bold green]")
 
     print('\n')
 
@@ -93,10 +93,10 @@ def RAM() :
         print(f"Alerta o uso da sua RAM está em: [bold yellow]{porcentagem_de_uso_cpu}% [/bold yellow]") 
 
     else :
-        print(f"Porcentagem de uso da RAM: [blue]{porcentagem_de_uso_ram}%[/blue]")
+        print(f"Porcentagem de uso da RAM: [green] {porcentagem_de_uso_ram}% [/green]")
 
     
-    print(f"Memória RAM total: [blue]{memoria_total}Gb[/blue]")
+    print(f"Memória RAM total: [bold green ]{memoria_total}Gb [/bold green]")
 
 
     if memoria_disponivel < 7 :
@@ -106,7 +106,7 @@ def RAM() :
         print(f"Alerta você só tem: [bold yellow]{memoria_disponivel}Gb da sua RAM dísponivel [/bold yellow]")
 
     else :
-        print(f"[blue]{memoria_disponivel}Gb[/blue]")
+        print(f"[bold green] {memoria_disponivel}Gb [/bold green]")
 
     if memoria_utilizada >= 7 :
         print(f"Alerta você está usando: [bold red]{memoria_utilizada}Gb da sua RAM [/bold red]")
@@ -115,7 +115,7 @@ def RAM() :
         print(f"Alerta você está usando: [bold yellow]{memoria_utilizada}Gb da sua RAM [/bold yellow]")   
 
     else :
-        print(f"Gigabytes de uso da RAM: [blue]{memoria_utilizada}Gb[/blue]")
+        print(f"Gigabytes de uso da RAM: [bold green] {memoria_utilizada}Gb [/bold green]")
 
 
     print('\n')
@@ -141,10 +141,10 @@ def Disco() :
         print(f"Alerta o uso do seu Disco está em: [bold yellow]{memoria_disponivel}% [/bold yellow]")  
 
     else :
-        print(f"Porcentagem de uso do Disco: [blue]{porcentagem_de_disco}%[/blue]")
+        print(f"Porcentagem de uso do Disco: [bold green] {porcentagem_de_disco}% [/bold green]")
 
     
-    print(f"Espaço total do seu Disco: [blue]{espaco_total}Gb[/blue]")
+    print(f"Espaço total do seu Disco: [bold green] {espaco_total}Gb [/bold green]")
 
     
     if espaco_livre < 20 :
@@ -154,7 +154,7 @@ def Disco() :
         print(f"Alerta o uso do seu Disco está em: [bold yellow]{espaco_livre}Gb [/bold yellow]") 
 
     else :
-        print(f"Espaço livre do seu Disco: [blue]{espaco_livre}Gb[/blue]")
+        print(f"Espaço livre do seu Disco: [bold green] {espaco_livre}Gb [/bold green]")
     
     if espaco_utilizado >= 220 :
         print(f"Alerta você só tem [bold red]{espaco_total - espaco_utilizado}Gb do seu Disco dísponivel [/bold red]")
@@ -163,7 +163,7 @@ def Disco() :
         print(f"Alerta você só tem: [bold yellow]{espaco_total - espaco_utilizado}Gb do seu Disco dísponivel [/bold yellow]") 
 
     else :
-        print(f"Espaço do Disco que está sendo utilizado: [blue]{espaco_utilizado}Gb[/blue]")
+        print(f"Espaço do Disco que está sendo utilizado: [bold green] {espaco_utilizado}Gb [/bold green]")
 
     
     banco(porcentagem_de_disco, 'Uso', 13, '%')
@@ -174,7 +174,7 @@ def Disco() :
     print('\n')
                    
     print("Hora da captura:")
-    print(datetime.now().strftime("%H:%M:%S"))
+    print(datetime.now().strftime("[blue]%H:%M:%S[/blue]"))
                  
     print('\n')     
 
