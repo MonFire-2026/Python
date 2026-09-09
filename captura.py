@@ -58,7 +58,7 @@ def CPU():
     if porcentagem_de_uso_cpu >= 80 :
         print(f"Alerta o uso da sua CPU está em: [bold red]{porcentagem_de_uso_cpu}% [/bold red]")   
 
-    elif porcentagem_de_uso_cpu >= 50 :
+    elif porcentagem_de_uso_cpu >= 2 :
         print(f"Alerta o uso da sua CPU está em: [bold yellow]{porcentagem_de_uso_cpu}% [/bold yellow]")  
 
     else : 
@@ -150,8 +150,8 @@ def Disco() :
     if espaco_livre < 20 :
         print(f"Alerta o uso do seu Disco está em: [bold red]{espaco_livre}Gb [/bold red]")
 
-    elif memoria_disponivel <= 45 :
-        print(f"Alerta o uso do seu Disco está em: [bold yellow]{memoria_disponivel}Gb [/bold yellow]") 
+    elif espaco_livre <= 45 :
+        print(f"Alerta o uso do seu Disco está em: [bold yellow]{espaco_livre}Gb [/bold yellow]") 
 
     else :
         print(f"Espaço livre do seu Disco: [blue]{espaco_livre}Gb[/blue]")
