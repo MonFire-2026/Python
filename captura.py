@@ -9,7 +9,7 @@ def banco(N1, N2, N3, N4):
     
     cnx = mysql.connector.connect(user = "adm_monfire",
                                   password = "Monfire@2026",
-                                  host = "127.0.0.1",
+                                  host = "10.18.32.160",
                                   port = 3306,
                                   database = "monfire",
                                   use_pure = True
@@ -47,6 +47,12 @@ porcentagem_de_disco = 0
 espaco_total = 0
 espaco_livre = 0
 espaco_utilizado = 0
+
+# variaveis rede
+rede1 = 0
+rede2 = 0
+rede3 = 0
+rede4= 0
 
 
 def CPU():
@@ -138,7 +144,7 @@ def Disco() :
         print(f"Alerta o uso do seu Disco está em: [bold red]{porcentagem_de_disco}% [/bold red]") 
 
     elif porcentagem_de_disco >= 65 :
-        print(f"Alerta o uso do seu Disco está em: [bold yellow]{memoria_disponivel}% [/bold yellow]")  
+        print(f"Alerta o uso do seu Disco está em: [bold yellow]{porcentagem_de_disco}% [/bold yellow]")  
 
     else :
         print(f"Porcentagem de uso do Disco: [bold green] {porcentagem_de_disco}% [/bold green]")
@@ -168,7 +174,7 @@ def Disco() :
     
     banco(porcentagem_de_disco, 'Uso', 13, '%')
     banco(espaco_total, 'Total', 13, 'Gb')
-    banco(espaco_livre, 'Disponível', 13, 'Gb')
+    banco(espaco_livre, 'Disponível', 13, 'Gb')   
     banco(espaco_utilizado, 'Em uso', 13, 'Gb')
                  
     print('\n')
@@ -176,7 +182,10 @@ def Disco() :
     print("Hora da captura:")
     print(datetime.now().strftime("[blue]%H:%M:%S[/blue]"))
                  
-    print('\n')     
+    print('\n')  
+
+def Rede() :
+    rede1 = p.net_io_counters(pernic=True, nowrap= False)
 
 
 while True:

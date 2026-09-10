@@ -1,4 +1,5 @@
 from rich import print
+import psutil as p
 
-print("[bold red]Texto em vermelho e negrito![/bold red]")
-print("[blue]Este texto é azul[/blue] e [green]este é verde[/green].")
+rede1 = p.net_io_counters(pernic=True, nowrap= True)
+print(rede1)
