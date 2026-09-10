@@ -185,12 +185,40 @@ def Disco() :
     print('\n')  
 
 def Rede() :
-    rede1 = p.net_io_counters(pernic=True, nowrap= False)
+   
+    dados_rede = p.net_io_counters()
+
+    bytes_enviados = round(dados_rede.bytes_sent / (1024**2), 2)
+    bytes_recebidos = round(dados_rede.bytes_recv / (1024**2), 2)
+
+    if bytes_recebidos >= 500 :
+        print(f"Alerta! Dados recebidos (Download): [bold red]{bytes_recebidos} MB [/bold red]") 
+
+    elif bytes_recebidos >= 200 :
+        print(f"Alerta! Dados recebidos (Download): [bold yellow]{bytes_recebidos} MB [/bold yellow]")  
+
+    else :
+        print(f"Dados recebidos (Download): [bold green] {bytes_recebidos} MB [/bold green]")
+
+    if bytes_enviados >= 200 :
+        print(f"Alerta! Dados enviados (Upload): [bold red]{bytes_enviados} MB [/bold red]") 
+
+    elif bytes_enviados >= 100 :
+        print(f"Alerta! Dados enviados (Upload): [bold yellow]{bytes_enviados} MB [/bold yellow]")  
+
+    else :
+        print(f"Dados enviados (Upload): [bold green] {bytes_enviados} MB [/bold green]")
+
+    print('\n')
+
+    banco(bytes_recebidos, 'Download', 19, 'MB')
+    banco(bytes_enviados, 'Upload', 19, 'MB')
 
 
 while True:
     CPU()
     RAM()
     Disco()
+    Rede()
     t.sleep(5)
     
