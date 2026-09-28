@@ -1,0 +1,25 @@
+﻿data_hora;maquina;componente;tipo;valor;uni_medida
+2026-09-28 16:43:27;Felipe Amoroso;CPU;Uso;7,2;%
+2026-09-28 16:43:27;Felipe Amoroso;CPU;Frequência;1453,0;Hz
+2026-09-28 16:43:27;Felipe Amoroso;RAM;Uso;86,8;%
+2026-09-28 16:43:27;Felipe Amoroso;RAM;Total;8;Gb
+2026-09-28 16:43:27;Felipe Amoroso;RAM;Disponível;1;Gb
+2026-09-28 16:43:27;Felipe Amoroso;RAM;Em uso;7;Gb
+2026-09-28 16:43:27;Felipe Amoroso;DISCO;Uso;19,8;%
+2026-09-28 16:43:27;Felipe Amoroso;DISCO;Total;475;Gb
+2026-09-28 16:43:27;Felipe Amoroso;DISCO;Disponível;381;Gb
+2026-09-28 16:43:27;Felipe Amoroso;DISCO;Em uso;94;Gb
+2026-09-28 16:43:27;Felipe Amoroso;REDE;Download;385,66;MB
+2026-09-28 16:43:27;Felipe Amoroso;REDE;Upload;45,22;MB
+2026-09-28 16:43:32;Felipe Amoroso;CPU;Uso;8,3;%
+2026-09-28 16:43:32;Felipe Amoroso;CPU;Frequência;2100,0;Hz
+2026-09-28 16:43:32;Felipe Amoroso;RAM;Uso;86,5;%
+2026-09-28 16:43:32;Felipe Amoroso;RAM;Total;8;Gb
+2026-09-28 16:43:32;Felipe Amoroso;RAM;Disponível;1;Gb
+2026-09-28 16:43:32;Felipe Amoroso;RAM;Em uso;7;Gb
+2026-09-28 16:43:32;Felipe Amoroso;DISCO;Uso;19,8;%
+2026-09-28 16:43:32;Felipe Amoroso;DISCO;Total;475;Gb
+2026-09-28 16:43:32;Felipe Amoroso;DISCO;Disponível;381;Gb
+2026-09-28 16:43:32;Felipe Amoroso;DISCO;Em uso;94;Gb
+2026-09-28 16:43:32;Felipe Amoroso;REDE;Download;385,69;MB
+2026-09-28 16:43:32;Felipe Amoroso;REDE;Upload;45,22;MB
