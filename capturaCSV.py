@@ -124,10 +124,10 @@ def RAM() :
 
 def Disco() :
 
-    porcentagem_de_disco = p.disk_usage('C:\\').percent
-    espaco_total = round(p.disk_usage('C:\\').total / (1024 ** 3))
-    espaco_livre = round(p.disk_usage('C:\\').free / (1024 ** 3))
-    espaco_utilizado = round(p.disk_usage('C:\\').used / (1024 ** 3))
+    porcentagem_de_disco = p.disk_usage('/').percent
+    espaco_total = round(p.disk_usage('/').total / (1024 ** 3))
+    espaco_livre = round(p.disk_usage('/').free / (1024 ** 3))
+    espaco_utilizado = round(p.disk_usage('/').used / (1024 ** 3))
 
     if porcentagem_de_disco >= 80 :
         print(f"Alerta o uso do seu Disco está em: {porcentagem_de_disco}%")
