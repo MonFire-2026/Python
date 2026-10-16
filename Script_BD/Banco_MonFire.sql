@@ -34,10 +34,11 @@ CREATE TABLE usuario_cargo (
     CONSTRAINT fk_usuario_cargo_cargo FOREIGN KEY (fk_cargo) REFERENCES cargo(id)
 );
 
+
 CREATE TABLE maquina (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50) NOT NULL,
-    ip INT NOT NULL,
+    ip VARCHAR(45) NOT NULL,
     SO VARCHAR(30),
     uptime DATETIME DEFAULT current_timestamp NOT NULL,
     fk_empresa INT NOT NULL,
@@ -124,8 +125,6 @@ INSERT INTO metrica_componente (nome, unidade_medida, especificacao) VALUES
     ('Disponível', 'GB',  'Quantidade livre'),
     ('Em uso',     'GB',  'Quantidade utilizada'),
     ('Download',   'MB',  'Dados recebidos'),
-    ('Rede',       'MB',  'Dados trafegados na rede'),
-    ('Rede',       'MB',  'Dados trafegados na rede'),
     ('Upload',     'MB',  'Dados enviados');
 
 INSERT INTO tipo_componente (nome, fk_metrica_componente) VALUES
@@ -140,15 +139,13 @@ INSERT INTO tipo_componente (nome, fk_metrica_componente) VALUES
     ('Disco', 4),
     ('Disco', 5),
     ('Rede - Recebidos', 6),
-    ('Rede - Enviados', 8);
-    ('Rede - Recebidos', 6),
-    ('Rede - Enviados', 8);
+    ('Rede - Enviados', 7);
 
 INSERT INTO componente (status_atividade, fk_tipo_componente)
 SELECT 1, id FROM tipo_componente;
 
-INSERT INTO maquina (nome, fk_empresa,ip) VALUES 
-	('Maquina00', 2, 10101010);
+INSERT INTO maquina (nome, fk_empresa, ip) VALUES
+    ('Maquina01', 2, '10.10.10.10');
 
 INSERT INTO configuracao_maquina (fk_maquina, fk_componente) VALUES
     (1, 1),   -- id 1:  CPU Uso
@@ -164,21 +161,7 @@ INSERT INTO configuracao_maquina (fk_maquina, fk_componente) VALUES
     (1, 11),  -- id 11: Rede - Recebidos (Java)
     (1, 12);  -- id 12: Rede - Enviados  (Java)
 
--- SELECT
-    (1, 1),   -- id 1:  CPU Uso
-    (1, 2),   -- id 2:  CPU Frequência
-    (1, 3),   -- id 3:  RAM Uso
-    (1, 4),   -- id 4:  RAM Total
-    (1, 5),   -- id 5:  RAM Disponível
-    (1, 6),   -- id 6:  RAM Em uso
-    (1, 7),   -- id 7:  Disco Uso
-    (1, 8),   -- id 8:  Disco Total
-    (1, 9),   -- id 9:  Disco Disponível
-    (1, 10),  -- id 10: Disco Em uso
-    (1, 11),  -- id 11: Rede - Recebidos (Java)
-    (1, 12);  -- id 12: Rede - Enviados  (Java)
-
--- SELECT
+-- SELECT das capturas
 SELECT c.id AS 'Número da Captura',
        m.nome AS 'Máquina',
        t.nome AS 'Componente',
@@ -192,4 +175,6 @@ JOIN maquina m ON m.id = cm.fk_maquina
 JOIN componente comp ON comp.id = cm.fk_componente
 JOIN tipo_componente t ON t.id = comp.fk_tipo_componente
 JOIN metrica_componente mc ON mc.id = t.fk_metrica_componente
-ORDER BY c.dtHr;  
+ORDER BY c.dtHr;
+
+ SELECT id, nome, ip, SO FROM maquina;

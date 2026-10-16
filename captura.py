@@ -1,6 +1,8 @@
 import psutil as p
 import time as t
 from datetime import datetime
+import platform
+import socket
 import mysql.connector
 from rich import print
 
@@ -51,6 +53,32 @@ def banco(tipo, metrica, valor):
     cursor.execute("INSERT INTO captura (valor, fk_configuracao_maquina) VALUES (%s, %s)",
                    (valor, fk_configuracao))
     cnx.commit()
+
+
+def obter_so():
+    return f"{platform.system()} {platform.release()}"
+
+
+def obter_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
+    except OSError:
+        return socket.gethostbyname(socket.gethostname())
+    finally:
+        s.close()
+
+
+def atualizar_maquina():
+    ip = obter_ip()
+    so = obter_so()
+
+    cursor.execute("UPDATE maquina SET ip = %s, SO = %s WHERE id = %s",
+                   (ip, so, MAQUINA_ID))
+    cnx.commit()
+
+    print(f"[bold cyan]Máquina {MAQUINA_ID} atualizada: IP {ip} | SO {so}[/bold cyan]")
 
 
 def CPU():
@@ -184,11 +212,13 @@ def Disco() :
 
 
 try:
+    atualizar_maquina()
+
     while True:
         CPU()
         RAM()
         Disco()
-        t.sleep(5   )
+        t.sleep(5)
 finally:
     cursor.close()
     cnx.close()
