@@ -4,7 +4,7 @@ from datetime import datetime
 import platform
 import socket
 import mysql.connector
-from rich import print
+from rich import print  
 
 MAQUINA_ID = 1
 
@@ -160,6 +160,15 @@ def RAM() :
 
 
 def Disco() :
+
+    if platform.system() == "Windows":
+        caminho_disco = "C:\\"
+
+    elif platform.system() == "Linuxs":
+        caminho_disco = "/"
+
+    else:
+        print("[bold red] Sistema operacional não suportado![/bold red]")
 
     porcentagem_de_disco = p.disk_usage('C:\\').percent
     espaco_total = round(p.disk_usage('C:\\').total / (1024 ** 3))
