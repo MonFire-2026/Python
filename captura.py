@@ -165,16 +165,18 @@ def Disco() :
     if platform.system() == "Windows":
         caminho_disco = "C:\\"
 
-    elif platform.system() == "Linuxs":
-        caminho_disco = "/"
+    elif platform.system() == "Linux":
+        caminho_disco = "/host" if os.path.exists("/host") else "/"
 
     else:
         print("[bold red] Sistema operacional não suportado![/bold red]")
+        return
 
-    porcentagem_de_disco = p.disk_usage('C:\\').percent
-    espaco_total = round(p.disk_usage('C:\\').total / (1024 ** 3))
-    espaco_livre = round(p.disk_usage('C:\\').free / (1024 ** 3))
-    espaco_utilizado = round(p.disk_usage('C:\\').used / (1024 ** 3))
+    uso_disco = p.disk_usage(caminho_disco)
+    porcentagem_de_disco = uso_disco.percent
+    espaco_total = round(uso_disco.total / (1024 ** 3))
+    espaco_livre = round(uso_disco.free / (1024 ** 3))
+    espaco_utilizado = round(uso_disco.used / (1024 ** 3))
 
     if porcentagem_de_disco >= 80 :
         print(f"Alerta o uso do seu Disco está em: [bold red]{porcentagem_de_disco}% [/bold red]")
