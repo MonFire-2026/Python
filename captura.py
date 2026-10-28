@@ -75,7 +75,7 @@ def atualizar_maquina():
     ip = obter_ip()
     so = obter_so()
 
-    cursor.execute("UPDATE maquina SET ip = %s, SO = %s WHERE id = %s",
+    cursor.execute("UPDATE maquina SET ip = %s, sistema_operacional = %s WHERE id = %s",
                    (ip, so, MAQUINA_ID))
     cnx.commit()
 
