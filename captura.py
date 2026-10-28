@@ -3,16 +3,17 @@ import time as t
 from datetime import datetime
 import platform
 import socket
+import os
 import mysql.connector
 from rich import print  
 
 MAQUINA_ID = 1
 
-cnx = mysql.connector.connect(user="aluno",
-                              password="sptech",
-                              host="localhost",
-                              port=3306,
-                              database="MonFire")
+cnx = mysql.connector.connect(user=os.getenv("DB_USER", "aluno"),
+                              password=os.getenv("DB_PASS", "sptech"),
+                              host=os.getenv("DB_HOST", "localhost"),
+                              port=int(os.getenv("DB_PORT", "3306")),
+                              database=os.getenv("DB_NAME", "MonFire"))
 
 cursor = cnx.cursor(buffered=True)
 
