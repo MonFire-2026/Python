@@ -7,7 +7,7 @@ from rich import print
 
 
 CODIGOS_PYTHON = ("CPU_USO", "RAM_USO", "DISCO_USO")
-INTERVALO_CAPTURA = 5
+INTERVALO_CAPTURA = 2
 ids_configuracao = {}
 
 
