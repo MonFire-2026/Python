@@ -1,236 +1,161 @@
-import psutil as p
-import time as t
-from datetime import datetime
-import platform
-import socket
 import os
+import time
+
 import mysql.connector
-from rich import print  
+import psutil
+from rich import print
 
-MAQUINA_ID = 1
 
-cnx = mysql.connector.connect(user=os.getenv("DB_USER", "aluno"),
-                              password=os.getenv("DB_PASS", "sptech"),
-                              host=os.getenv("DB_HOST", "localhost"),
-                              port=int(os.getenv("DB_PORT", "3306")),
-                              database=os.getenv("DB_NAME", "MonFire"))
-
-cursor = cnx.cursor(buffered=True)
-
+CODIGOS_PYTHON = ("CPU_USO", "RAM_USO", "DISCO_USO")
+INTERVALO_CAPTURA = 5
 ids_configuracao = {}
 
-SQL_BUSCAR_CONFIG = """
-    SELECT cm.id
-    FROM configuracao_maquina cm
-    JOIN componente c ON c.id = cm.fk_componente
-    JOIN tipo_componente t ON t.id = c.fk_tipo_componente
-    JOIN metrica_componente m ON m.id = t.fk_metrica_componente
-    WHERE cm.fk_maquina = %s AND t.nome = %s AND m.nome = %s
-"""
 
+def inteiro_positivo_do_ambiente(nome):
+    valor = os.getenv(nome, "").strip()
 
-def buscar_configuracao(tipo, metrica):
-    chave = (tipo, metrica)
-
-    if chave not in ids_configuracao:
-        cursor.execute(SQL_BUSCAR_CONFIG, (MAQUINA_ID, tipo, metrica))
-        linha = cursor.fetchone()
-
-        if linha is None:
-            return None
-
-        ids_configuracao[chave] = linha[0]
-
-    return ids_configuracao[chave]
-
-
-def banco(tipo, metrica, valor):
-    fk_configuracao = buscar_configuracao(tipo, metrica)
-
-    if fk_configuracao is None:
-        print(f"[bold red]Configuração não encontrada: máquina {MAQUINA_ID}, {tipo}, {metrica}[/bold red]")
-        return
-
-    cursor.execute("INSERT INTO captura (valor, fk_configuracao_maquina) VALUES (%s, %s)",
-                   (valor, fk_configuracao))
-    cnx.commit()
-
-
-def obter_so():
-    return f"{platform.system()} {platform.release()}"
-
-
-def obter_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(("8.8.8.8", 80))
-        return s.getsockname()[0]
-    except OSError:
-        return socket.gethostbyname(socket.gethostname())
-    finally:
-        s.close()
+        numero = int(valor)
+    except ValueError as erro:
+        raise ValueError(f"A variável {nome} deve ser um inteiro positivo.") from erro
+
+    if numero <= 0:
+        raise ValueError(f"A variável {nome} deve ser um inteiro positivo.")
+
+    return numero
 
 
-def atualizar_maquina():
-    ip = obter_ip()
-    so = obter_so()
+def conectar_banco():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", "3306")),
+        database=os.getenv("DB_NAME", "MonFire"),
+        user=os.getenv("DB_USER", "aluno"),
+        password=os.getenv("DB_PASS", "sptech"),
+    )
 
-    cursor.execute("UPDATE maquina SET ip = %s, sistema_operacional = %s WHERE id = %s",
-                   (ip, so, MAQUINA_ID))
-    cnx.commit()
 
-    print(f"[bold cyan]Máquina {MAQUINA_ID} atualizada: IP {ip} | SO {so}[/bold cyan]")
+def preparar_leitura_do_host():
+    proc_do_host = "/host/proc"
+
+    if os.path.isdir(proc_do_host):
+        psutil.PROCFS_PATH = proc_do_host
+        print(f"[cyan]CPU e RAM serão lidas de {proc_do_host}.[/cyan]")
+
+
+def carregar_configuracoes(cursor, maquina_id):
+    cursor.execute(
+        """
+        SELECT cm.id, tc.codigo
+        FROM configuracao_maquina AS cm
+        INNER JOIN componente AS comp ON comp.id = cm.fk_componente
+        INNER JOIN tipo_componente AS tc ON tc.id = comp.fk_tipo_componente
+        WHERE cm.fk_maquina = %s
+            AND cm.ativa = 1
+            AND comp.status_atividade = 1
+            AND tc.codigo IN ('CPU_USO', 'RAM_USO', 'DISCO_USO')
+        """,
+        (maquina_id,),
+    )
+
+    ids_configuracao.clear()
+    ids_configuracao.update({
+        codigo: configuracao_id
+        for configuracao_id, codigo in cursor.fetchall()
+    })
+
+
+def buscar_configuracao(codigo):
+    return ids_configuracao.get(codigo)
+
+
+def caminho_disco_monitorado():
+    if os.path.isdir("/host"):
+        return "/host"
+
+    if os.name == "nt":
+        return "C:\\"
+
+    return "/"
 
 
 def CPU():
+    if buscar_configuracao("CPU_USO") is None:
+        return None
 
-    print('\n')
-    porcentagem_de_uso_cpu = p.cpu_percent(interval=0.1)
-    frequencia = p.cpu_freq().current
-
-    if porcentagem_de_uso_cpu >= 80 :
-        print(f"Alerta o uso da sua CPU está em: [bold red]{porcentagem_de_uso_cpu}% [/bold red]")
-
-    elif porcentagem_de_uso_cpu >= 50 :
-        print(f"Alerta o uso da sua CPU está em: [bold yellow]{porcentagem_de_uso_cpu}% [/bold yellow]")
-
-    else :
-        print(f"Porcentagem de uso da CPU: [bold green] {porcentagem_de_uso_cpu}% [/bold green]")
-
-    if frequencia >= 1700 :
-        print(f"Alerta a frequência da sua CPU está em: [bold red]{frequencia}Hz [/bold red]")
-
-    elif frequencia >= 1500 :
-        print(f"Alerta a frequência da sua CPU está em: [bold yellow]{frequencia}Hz [/bold yellow]")
-
-    else :
-        print(f"A frequência da sua CPU está em: [bold green] {frequencia}Hz [/bold green]")
-
-    print('\n')
-
-    banco('CPU', 'Uso', porcentagem_de_uso_cpu)
-    # psutil retorna MHz; o banco guarda em GHz
-    banco('CPU', 'Frequência', round(frequencia / 1000, 2))
+    porcentagem_de_uso_cpu = psutil.cpu_percent(interval=0.1)
+    print(f"CPU: [green]{porcentagem_de_uso_cpu:.2f}%[/green]")
+    return "CPU_USO", porcentagem_de_uso_cpu
 
 
-def RAM() :
+def RAM():
+    if buscar_configuracao("RAM_USO") is None:
+        return None
 
-    porcentagem_de_uso_ram = p.virtual_memory().percent
-    memoria_total = round(p.virtual_memory().total / (1024**3))
-    memoria_disponivel = round(p.virtual_memory().available / (1024**3))
-    memoria_utilizada = round(p.virtual_memory().used / (1024**3))
-
-    if porcentagem_de_uso_ram >= 80 :
-        print(f"Alerta o uso da sua RAM está em: [bold red]{porcentagem_de_uso_ram}% [/bold red]")
-
-    elif porcentagem_de_uso_ram >= 65 :
-        print(f"Alerta o uso da sua RAM está em: [bold yellow]{porcentagem_de_uso_ram}% [/bold yellow]")
-
-    else :
-        print(f"Porcentagem de uso da RAM: [green] {porcentagem_de_uso_ram}% [/green]")
+    porcentagem_de_uso_ram = psutil.virtual_memory().percent
+    print(f"RAM: [green]{porcentagem_de_uso_ram:.2f}%[/green]")
+    return "RAM_USO", porcentagem_de_uso_ram
 
 
-    print(f"Memória RAM total: [bold green]{memoria_total}Gb [/bold green]")
+def Disco():
+    if buscar_configuracao("DISCO_USO") is None:
+        return None
 
-    if memoria_disponivel < 5.5 :
-        print(f"Alerta você só tem: [bold red]{memoria_disponivel}Gb da sua RAM dísponivel [/bold red]")
-
-    elif memoria_disponivel < 7 :
-        print(f"Alerta você só tem: [bold yellow]{memoria_disponivel}Gb da sua RAM dísponivel [/bold yellow]")
-
-    else :
-        print(f"[bold green] {memoria_disponivel}Gb [/bold green]")
-
-    if memoria_utilizada >= 7 :
-        print(f"Alerta você está usando: [bold red]{memoria_utilizada}Gb da sua RAM [/bold red]")
-
-    elif memoria_utilizada >= 5.5 :
-        print(f"Alerta você está usando: [bold yellow]{memoria_utilizada}Gb da sua RAM [/bold yellow]")
-
-    else :
-        print(f"Gigabytes de uso da RAM: [bold green] {memoria_utilizada}Gb [/bold green]")
+    porcentagem_de_uso_disco = psutil.disk_usage(caminho_disco_monitorado()).percent
+    print(f"Disco: [green]{porcentagem_de_uso_disco:.2f}%[/green]")
+    return "DISCO_USO", porcentagem_de_uso_disco
 
 
-    print('\n')
+def banco(conexao, cursor, leituras):
+    registros = [
+        (valor, buscar_configuracao(codigo))
+        for codigo, valor in leituras
+        if buscar_configuracao(codigo) is not None
+    ]
+
+    if not registros:
+        return 0
+
+    cursor.executemany(
+        "INSERT INTO captura (valor, fk_configuracao_maquina) VALUES (%s, %s)",
+        registros,
+    )
+    conexao.commit()
+    return len(registros)
 
 
-    banco('RAM', 'Uso', porcentagem_de_uso_ram)
-    banco('RAM', 'Total', memoria_total)
-    banco('RAM', 'Disponível', memoria_disponivel)
-    banco('RAM', 'Em uso', memoria_utilizada)
+def main():
+    maquina_id = inteiro_positivo_do_ambiente("MAQUINA_ID")
+    preparar_leitura_do_host()
+
+    conexao = conectar_banco()
+    cursor = conexao.cursor(buffered=True)
+
+    try:
+        carregar_configuracoes(cursor, maquina_id)
+        codigos = ", ".join(ids_configuracao) if ids_configuracao else "nenhuma"
+        print(f"[bold cyan]Máquina {maquina_id} | Métricas Python: {codigos}[/bold cyan]")
+
+        while True:
+            try:
+                leituras = [leitura for leitura in (CPU(), RAM(), Disco()) if leitura]
+                quantidade = banco(conexao, cursor, leituras)
+
+                if quantidade:
+                    print(f"[blue]{quantidade} captura(s) salva(s).[/blue]\n")
+                else:
+                    print("[yellow]Nenhuma métrica de CPU, RAM ou Disco foi configurada.[/yellow]\n")
+            except mysql.connector.Error as erro:
+                conexao.rollback()
+                print(f"[bold red]Erro ao salvar capturas: {erro}[/bold red]")
+
+            time.sleep(INTERVALO_CAPTURA)
+    except KeyboardInterrupt:
+        print("\n[yellow]Coletor Python encerrado.[/yellow]")
+    finally:
+        cursor.close()
+        conexao.close()
 
 
-def Disco() :
-
-    if platform.system() == "Windows":
-        caminho_disco = "C:\\"
-
-    elif platform.system() == "Linux":
-        caminho_disco = "/host" if os.path.exists("/host") else "/"
-
-    else:
-        print("[bold red] Sistema operacional não suportado![/bold red]")
-        return
-
-    uso_disco = p.disk_usage(caminho_disco)
-    porcentagem_de_disco = uso_disco.percent
-    espaco_total = round(uso_disco.total / (1024 ** 3))
-    espaco_livre = round(uso_disco.free / (1024 ** 3))
-    espaco_utilizado = round(uso_disco.used / (1024 ** 3))
-
-    if porcentagem_de_disco >= 80 :
-        print(f"Alerta o uso do seu Disco está em: [bold red]{porcentagem_de_disco}% [/bold red]")
-
-    elif porcentagem_de_disco >= 65 :
-        print(f"Alerta o uso do seu Disco está em: [bold yellow]{porcentagem_de_disco}% [/bold yellow]")
-
-    else :
-        print(f"Porcentagem de uso do Disco: [bold green] {porcentagem_de_disco}% [/bold green]")
-
-
-    print(f"Espaço total do seu Disco: [bold green] {espaco_total}Gb [/bold green]")
-
-
-    if espaco_livre < 20 :
-        print(f"Alerta o uso do seu Disco está em: [bold red]{espaco_livre}Gb [/bold red]")
-
-    elif espaco_livre <= 45 :
-        print(f"Alerta o uso do seu Disco está em: [bold yellow]{espaco_livre}Gb [/bold yellow]")
-
-    else :
-        print(f"Espaço livre do seu Disco: [bold green] {espaco_livre}Gb [/bold green]")
-
-    if espaco_utilizado >= 220 :
-        print(f"Alerta você só tem [bold red]{espaco_total - espaco_utilizado}Gb do seu Disco dísponivel [/bold red]")
-
-    elif espaco_utilizado >= 150 :
-        print(f"Alerta você só tem: [bold yellow]{espaco_total - espaco_utilizado}Gb do seu Disco dísponivel [/bold yellow]")
-
-    else :
-        print(f"Espaço do Disco que está sendo utilizado: [bold green] {espaco_utilizado}Gb [/bold green]")
-
-
-    banco('Disco', 'Uso', porcentagem_de_disco)
-    banco('Disco', 'Total', espaco_total)
-    banco('Disco', 'Disponível', espaco_livre)
-    banco('Disco', 'Em uso', espaco_utilizado)
-
-    print('\n')
-
-    print("Hora da captura:")
-    print(datetime.now().strftime("[blue]%H:%M:%S[/blue]"))
-
-    print('\n')
-
-
-try:
-    atualizar_maquina()
-
-    while True:
-        CPU()
-        RAM()
-        Disco()
-        t.sleep(5)
-finally:
-    cursor.close()
-    cnx.close()
+if __name__ == "__main__":
+    main()
