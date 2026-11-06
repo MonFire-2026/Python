@@ -372,19 +372,26 @@ END$$
 
 DELIMITER ;
 
--- Consulta demonstrativa das capturas usando o catálogo restaurado.
+-- Reúne somente a captura e os IDs necessários para identificar sua origem.
+CREATE OR REPLACE VIEW vw_captura_geral AS
 SELECT
-    c.id AS capturaId,
-    maq.nome AS maquina,
-    tc.nome AS componente,
-    mc.nome AS metrica,
+    c.id AS captura_id,
     c.valor,
-    mc.unidade_medida AS unidade,
-    c.dtHr
+    c.dtHr AS data_hora,
+    cm.fk_maquina AS maquina_id,
+    cm.fk_componente AS metrica_id,
+    atencao.limite AS limite_atencao,
+    critico.limite AS limite_critico
 FROM captura AS c
 INNER JOIN configuracao_maquina AS cm ON cm.id = c.fk_configuracao_maquina
-INNER JOIN maquina AS maq ON maq.id = cm.fk_maquina
-INNER JOIN componente AS comp ON comp.id = cm.fk_componente
-INNER JOIN tipo_componente AS tc ON tc.id = comp.fk_tipo_componente
-INNER JOIN metrica_componente AS mc ON mc.id = tc.fk_metrica_componente
-ORDER BY c.dtHr;
+LEFT JOIN metrica_alerta AS atencao
+    ON atencao.fk_configuracao_maquina = cm.id
+    AND atencao.fk_nivel_alerta = 2
+LEFT JOIN metrica_alerta AS critico
+    ON critico.fk_configuracao_maquina = cm.id
+    AND critico.fk_nivel_alerta = 3;
+
+-- Exemplo de uso. A ordenação é feita no SELECT, não dentro da VIEW.
+SELECT *
+FROM vw_captura_geral
+ORDER BY data_hora;
